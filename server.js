@@ -10,12 +10,21 @@ const server = http.createServer((req, res) => {
   switch (req.url) {
     case "/":
       path += "index.html";
+      //you can write status code in response
+      //100 - data response
+      //200 - success
+      //300 - move redirect
+      //400 - user or client error
+      //500 - server error
+      res.statusCode = 200;
       break;
     case "/about":
       path += "about.html";
+      res.statusCode = 200;
       break;
     default:
       path += "404.html";
+      res.statusCode = 404;
       break;
   }
 
