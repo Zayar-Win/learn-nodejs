@@ -1,12 +1,20 @@
 const express = require("express");
 const req = require("express/lib/request");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
+const Blog = require("./models/Blog.js");
 
 //express app
 const app = express();
 
 //register view engine
 app.set("view engine", "ejs");
+
+const dbURI =
+  "mongodb+srv://zayarwin:zayarwin@cluster0.kyr3d.mongodb.net/example-blogs?retryWrites=true&w=majority";
+
+//connnecting to mongodb
+mongoose.connect(dbURI);
 
 //useing logger middle ware morgan
 app.use(morgan("tiny"));
@@ -25,25 +33,8 @@ app.use((req, res, next) => {
 
 //listem for request
 app.get("/", (req, res) => {
-  const blogs = [
-    {
-      title: "Yoshi finds eggs",
-      snippet:
-        "Lorem ipsum dolor sit amet consectetur",
-    },
-    {
-      title: "Mario finds stars",
-      snippet:
-        "Lorem ipsum dolor sit amet consectetur",
-    },
-    {
-      title: "How to defeat bowser",
-      snippet:
-        "Lorem ipsum dolor sit amet consectetur",
-    },
-  ];
+  res.redirect("/blogs");
   //we can pass the data to ejs template from render's send parameter
-  res.render("index", { title: "Home", blogs });
 });
 
 app.get("/about", (req, res) => {
@@ -52,6 +43,18 @@ app.get("/about", (req, res) => {
 
 app.get("/blogs/create", (req, res) => {
   res.render("create", { title: "Create" });
+});
+
+app.get("/blogs", async (req, res) => {
+  try {
+    const blogs = Blog.find({});
+    res.render("index", {
+      title: "All blogs",
+      blogs,
+    });
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
 //404
