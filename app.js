@@ -1,11 +1,27 @@
 const express = require("express");
 const req = require("express/lib/request");
+const morgan = require("morgan");
 
 //express app
 const app = express();
 
 //register view engine
 app.set("view engine", "ejs");
+
+//useing logger middle ware morgan
+app.use(morgan("tiny"));
+
+//to send the static file to browser we can use static middleware build in express
+//by saying folder name that want to be send to browser
+app.use(express.static("public"));
+
+//a middleware is a function that work between req and res
+app.use((req, res, next) => {
+  console.log("i am middleware");
+  //after console the middle ware doesn't whate does next do
+  //so we can say hey go to the next by using next function
+  next();
+});
 
 //listem for request
 app.get("/", (req, res) => {
