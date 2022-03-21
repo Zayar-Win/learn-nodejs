@@ -60,6 +60,14 @@ h3 {
 }
 /* index styles */
 /* details styles */
+.btn {
+  margin: 10px 3px;
+  display: inline-block;
+  background-color: red;
+  padding: 5px 15px;
+  color: white;
+  border-radius: 3px;
+}
 /* create styles */
 .create-blog form {
   max-width: 400px;

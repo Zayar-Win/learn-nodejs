@@ -18,7 +18,7 @@ mongoose.connect(dbURI);
 
 //useing logger middle ware morgan
 app.use(morgan("tiny"));
-
+app.use(express.urlencoded({ extended: true }));
 //to send the static file to browser we can use static middleware build in express
 //by saying folder name that want to be send to browser
 app.use(express.static("public"));
@@ -45,13 +45,42 @@ app.get("/blogs/create", (req, res) => {
   res.render("create", { title: "Create" });
 });
 
+app.post("/blogs", async (req, res) => {
+  try {
+    const blog = Blog.create(req.body);
+    res.redirect("/blogs");
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
 app.get("/blogs", async (req, res) => {
   try {
-    const blogs = Blog.find({});
+    const blogs = await Blog.find();
     res.render("index", {
       title: "All blogs",
       blogs,
     });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
+app.get("/blogs/:id", async (req, res) => {
+  const id = req.params.id;
+  const blog = await Blog.findById(id);
+  res.render("detail", {
+    title: "Blog Details",
+    blog,
+  });
+});
+
+app.delete("/blogs/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Blog.findByIdAndDelete(id);
+
+    res.json({ redirect: "/blogs" });
   } catch (err) {
     res.sendStatus(500);
   }
