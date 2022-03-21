@@ -3,6 +3,7 @@ const req = require("express/lib/request");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const Blog = require("./models/Blog.js");
+const blogRoutes = require("./routes/blogRoutes");
 
 //express app
 const app = express();
@@ -32,59 +33,17 @@ app.use((req, res, next) => {
 });
 
 //listem for request
-app.get("/", (req, res) => {
-  res.redirect("/blogs");
-  //we can pass the data to ejs template from render's send parameter
-});
 
 app.get("/about", (req, res) => {
   res.render("about", { title: "About" });
 });
 
-app.get("/blogs/create", (req, res) => {
-  res.render("create", { title: "Create" });
+app.get("/", (req, res) => {
+  res.redirect("/blogs");
+  //we can pass the data to ejs template from render's send parameter
 });
 
-app.post("/blogs", async (req, res) => {
-  try {
-    const blog = Blog.create(req.body);
-    res.redirect("/blogs");
-  } catch (err) {
-    res.sendStatus(500);
-  }
-});
-
-app.get("/blogs", async (req, res) => {
-  try {
-    const blogs = await Blog.find();
-    res.render("index", {
-      title: "All blogs",
-      blogs,
-    });
-  } catch (err) {
-    res.sendStatus(500);
-  }
-});
-
-app.get("/blogs/:id", async (req, res) => {
-  const id = req.params.id;
-  const blog = await Blog.findById(id);
-  res.render("detail", {
-    title: "Blog Details",
-    blog,
-  });
-});
-
-app.delete("/blogs/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    await Blog.findByIdAndDelete(id);
-
-    res.json({ redirect: "/blogs" });
-  } catch (err) {
-    res.sendStatus(500);
-  }
-});
+app.use("/blogs", blogRoutes);
 
 //404
 //this middleware function run every request come in
